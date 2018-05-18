@@ -27,5 +27,5 @@ build: guard-STACK
 
 
 destroy: guard-STACK
-	stacker destroy --region ${AWS_DEFAULT_REGION} ${ARGS} conf/$(STACK).env stacker.yaml
+	stacker destroy --force --region ${AWS_DEFAULT_REGION} ${ARGS} conf/$(STACK).env stacker.yaml
 .PHONY: destroy
