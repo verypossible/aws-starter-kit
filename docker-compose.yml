@@ -1,0 +1,11 @@
+version: '3'
+services:
+  stacker:
+    build: .
+    image: verypossible/stacker
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_DEFAULT_REGION=us-east-2
+    volumes:
+      - .:/stacks

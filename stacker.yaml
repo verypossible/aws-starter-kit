@@ -1,0 +1,81 @@
+namespace: ${namespace}
+
+
+# This sets the syspath to include the local path, which allows access to the
+# blueprints in the blueprints directory.
+# http://stacker.readthedocs.io/en/latest/config.html#module-paths
+sys_path: .
+
+
+mappings:
+  AmiMap:
+    us-east-1:
+      bastion: ami-43a15f3e
+    us-east-2:
+      bastion: ami-916f59f4
+    us-west-2:
+      bastion: ami-4e79ed36
+
+
+stacks:
+  - name: vpc
+    class_path: stacker_blueprints.vpc.VPC
+    variables:
+      AZCount: ${vpc_az_count}  # This controls the number of subnets and bastion hosts
+      UseNatGateway: true
+      PublicSubnets:
+        - 10.128.0.0/24
+        - 10.128.1.0/24
+        - 10.128.2.0/24
+        - 10.128.3.0/24
+      PrivateSubnets:
+        - 10.128.8.0/22
+        - 10.128.12.0/22
+        - 10.128.16.0/22
+        - 10.128.20.0/22
+      CidrBlock: 10.128.0.0/16
+      # InternalDomain: very
+
+  # - name: bastion
+  #   class_path: stacker_blueprints.bastion.Bastion
+  #   variables:
+  #     AvailabilityZones: ${output vpc::AvailabilityZones}
+  #     DefaultSG: ${output vpc::DefaultSG}
+  #     ImageName: bastion
+  #     InstanceType: ${bastion_instance_type}
+  #     MaxSize: 1
+  #     OfficeNetwork: ${bastion_inbound_cidr}
+  #     PrivateSubnets: ${output vpc::PrivateSubnets}
+  #     PublicSubnets: ${output vpc::PublicSubnets}
+  #     SshKeyName: ${bastion_ssh_keyname}
+  #     VpcId: ${output vpc::VpcId}
+  #
+  # - name: securityrules
+  #   class_path: blueprints.security_groups.SecurityGroupRules
+  #   variables:
+  #     VpcId: ${output vpc::VpcId}
+  #     BastionSecurityGroup: ${output bastion::SecurityGroup}
+  #     # Add IPs here to whitelist them to the bastion host
+  #     BastionIPWhitelist:
+  #       - 24.9.87.217    # bz
+  #       - 50.35.108.59   # dsearles
+  #
+  # - name: client-rds
+  #   class_path: blueprints.rds.PostgresMaster
+  #   variables:
+  #     AllocatedStorage: ${rds_allocated_storage}
+  #     InternalZoneId: ${output vpc::InternalZoneId}
+  #     InternalZoneName: ${output vpc::InternalZoneName}
+  #     InternalHostname: client-db
+  #     DBFamily: postgres9.6
+  #     DBInstanceIdentifier: client-${namespace}
+  #     DatabaseName: ${rds_client_dbname}
+  #     EngineVersion: "9.6.5"
+  #     ExistingSecurityGroup: ${output securityrules::RDSSecurityGroupId}
+  #     InstanceType: ${rds_instance_type}
+  #     MasterUser: ${rds_client_username}
+  #     MasterUserPassword: ${rds_client_password}
+  #     MultiAZ: ${rds_multi_az}
+  #     StorageEncrypted: ${rds_client_encrypted}
+  #     Subnets: ${output vpc::PrivateSubnets}
+  #     VpcId: ${output vpc::VpcId}

@@ -1,0 +1,2 @@
+stacker>=1.2.0
+stacker_blueprints>=1.0.7
